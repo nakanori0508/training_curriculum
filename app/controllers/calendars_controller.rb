@@ -15,7 +15,7 @@ class CalendarsController < ApplicationController
   private
 
   def plan_params
-    params.require(:calendars).permit(:date, :plan)
+    params.require(:plan).permit(:date, :plan)
   end
 
   def get_week
@@ -34,7 +34,14 @@ class CalendarsController < ApplicationController
       plan = plans.map do |plan|
         today_plans.push(plan.plan) if plan.date == @todays_date + x
       end
-      days = { month: (@todays_date + x).month, date: (@todays_date+x).day, plans: today_plans}
+
+      # :weekdayの配列で使うインデックス番号を7以下にする
+      wnum = @todays_date + x
+      if wnum > 7
+        wnum = wnum - 7
+      end
+
+      days = { month:  (@todays_date + x).month, date: (@todays_date+x).day, plans: today_plans, weekdays: wdays[(wnum).wday]}
       @week_days.push(days)
     end
 
